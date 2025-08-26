@@ -8,6 +8,8 @@
 #include "RenderPila.h"
 #include "Cola.h"
 #include "RenderCola.h"
+#include "ListaDoble.h"
+#include "RenderListaDoble.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +28,6 @@ private slots:
     void BotonEliminarClic();
     void BotonInsertarClic();
     void BotonBuscarClic();
-
     void GuardarListaSimpleClic();
     void CargarListaSimpleClic();
 
@@ -36,12 +37,21 @@ private slots:
     void BotonBuscarPilaClic();
     void GuardarPilaClic();
     void CargarPilaClic();
+
     void BotonEncolarClic();
     void BotonDesencolarClic();
     void BotonMirarFrenteClic();
     void BotonBuscarColaClic();
     void GuardarColaClic();
     void CargarColaClic();
+
+
+    void BotonIngresarDLLClic();
+    void BotonEliminarDLLClic();
+    void BotonInsertarDLLClic();
+    void BotonBuscarDLLClic();
+    void GuardarListaDobleClic();
+    void CargarListaDobleClic();
 
 private:
     Ui::MainWindow* ui;
@@ -56,6 +66,11 @@ private:
     QGraphicsScene* EscenaCola;
     Cola EstructuraCola;
     RenderCola RenderDeCola;
+
+
+    QGraphicsScene* EscenaListaDoble = nullptr;
+    ListaDoble EstructuraListaDoble;
+    RenderListaDoble RenderDeListaDoble;
 };
 
 #endif

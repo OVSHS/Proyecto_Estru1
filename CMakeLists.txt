@@ -39,6 +39,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Cola.cpp
         RenderCola.h
         RenderCola.cpp
+        ListaDoble.h
+        ListaDoble.cpp
+        RenderListaDoble.h
+        RenderListaDoble.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Proyecto_Estru1 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -1,6 +1,7 @@
 #include "RenderCola.h"
 #include <QVariantAnimation>
 #include <QGraphicsTextItem>
+#include <QTimer>
 
 RenderCola::RenderCola() : Escena(nullptr), LapizNegro(Qt::black), BrochaBlanca(Qt::white) {}
 
@@ -120,10 +121,10 @@ void RenderCola::AnimarDesencolar(const Cola& cola) {
     fade->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void RenderCola::ResaltarIndice(int indice) {
-    if (indice < 0 || indice >= Nodos.size()) return;
-    for (auto* n : Nodos) n->setPen(LapizNegro);
-    QPen p(Qt::black);
-    p.setWidth(3);
-    Nodos[indice]->setPen(p);
+void RenderCola::ResaltarIndice(int indiceObjetivo) {
+    if (indiceObjetivo < 0 || indiceObjetivo >= Nodos.size()) return;
+    QGraphicsEllipseItem* nodoDestino = Nodos.at(indiceObjetivo);
+    QBrush brochaAnterior = nodoDestino->brush();
+    nodoDestino->setBrush(QBrush(Qt::yellow));
+    QTimer::singleShot(600, [nodoDestino, brochaAnterior](){ nodoDestino->setBrush(brochaAnterior); });
 }

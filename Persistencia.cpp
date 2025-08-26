@@ -6,7 +6,7 @@
 #include <QStringConverter>
 #include "Pila.h"
 #include "Cola.h"
-
+#include "ListaDoble.h"
 bool Persistencia::GuardarListaSimple(const QString& RutaArchivo, const ListaSimple& Lista) {
     bool OperacionExitosa = false;
     QFile Archivo(RutaArchivo);
@@ -152,10 +152,44 @@ bool Persistencia::CargarCola(const QString& RutaArchivo, Cola& EstructuraCola) 
     return OperacionExitosa;
 }
 
-bool Persistencia::GuardarListaDoble(const QString& Ruta, const ListaDoble& Lista) {
-    return false;
+bool Persistencia::GuardarListaDoble(const QString& RutaArchivo, const ListaDoble& Lista) {
+    bool operacionExitosa = false;
+    QFile archivoSalida(RutaArchivo);
+    if (archivoSalida.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream flujoTexto(&archivoSalida);
+        flujoTexto.setEncoding(QStringConverter::Utf8);
+        flujoTexto << "TIPO ListaDoble v1 ORDEN izquierda_a_derecha\n";
+        int cantidadElementos = Lista.Tamano();
+        int indiceActual = 0;
+        while (indiceActual < cantidadElementos) {
+            int valorElemento = 0;
+            bool obtenido = Lista.ObtenerValorEn(indiceActual, valorElemento);
+            if (obtenido) flujoTexto << valorElemento << "\n";
+            indiceActual = indiceActual + 1;
+        }
+        operacionExitosa = true;
+    }
+    return operacionExitosa;
 }
 
-bool Persistencia::CargarListaDoble(const QString& Ruta, ListaDoble& Lista) {
-    return false;
+bool Persistencia::CargarListaDoble(const QString& RutaArchivo, ListaDoble& Lista) {
+    bool operacionExitosa = false;
+    QFile archivoEntrada(RutaArchivo);
+    if (archivoEntrada.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream flujoTexto(&archivoEntrada);
+        flujoTexto.setEncoding(QStringConverter::Utf8);
+        QString cabecera = flujoTexto.readLine().trimmed();
+        if (cabecera.startsWith("TIPO ListaDoble")) {
+            Lista.Limpiar();
+            while (!flujoTexto.atEnd()) {
+                QString lineaLeida = flujoTexto.readLine().trimmed();
+                if (lineaLeida.isEmpty()) continue;
+                bool esNumero = false;
+                int valorLeido = lineaLeida.toInt(&esNumero);
+                if (esNumero) Lista.AgregarAlFinal(valorLeido);
+            }
+            operacionExitosa = true;
+        }
+    }
+    return operacionExitosa;
 }

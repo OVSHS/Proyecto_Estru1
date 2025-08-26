@@ -785,7 +785,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGraphicsView" name="VistaLista_2">
+     <widget class="QGraphicsView" name="VistaListaDoble">
       <property name="geometry">
        <rect>
         <x>170</x>

@@ -72,6 +72,28 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->BotonBuscarCola,  &QPushButton::clicked, this, &MainWindow::BotonBuscarColaClic);
     connect(ui->GuardarCola,      &QPushButton::clicked, this, &MainWindow::GuardarColaClic);
     connect(ui->CargarCola,       &QPushButton::clicked, this, &MainWindow::CargarColaClic);
+
+    EscenaListaDoble = new QGraphicsScene(this);
+    ui->VistaListaDoble->setScene(EscenaListaDoble);
+    ui->VistaListaDoble->viewport()->setStyleSheet("background: white;");
+    ui->VistaListaDoble->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->VistaListaDoble->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->VistaListaDoble->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    RenderDeListaDoble.ConfigurarEscena(EscenaListaDoble, QRectF(0, 0, ui->VistaListaDoble->width(), ui->VistaListaDoble->height()));
+
+    auto* valDll = new QIntValidator(0, 2147483647, this);
+    ui->TextoIngresarDLL->setValidator(valDll);
+    ui->TextoEliminarDLL->setValidator(valDll);
+    ui->TextoInsertarDLL->setValidator(valDll);
+    ui->TextoBuscarDLL->setValidator(valDll);
+
+    connect(ui->BotonIngresarDLL,  &QPushButton::clicked, this, &MainWindow::BotonIngresarDLLClic);
+    connect(ui->BotonEliminarDLL,  &QPushButton::clicked, this, &MainWindow::BotonEliminarDLLClic);
+    connect(ui->BotonInsertarDLL,  &QPushButton::clicked, this, &MainWindow::BotonInsertarDLLClic);
+    connect(ui->BotonBuscarDLL,    &QPushButton::clicked, this, &MainWindow::BotonBuscarDLLClic);
+    connect(ui->GuardarListaDoble, &QPushButton::clicked, this, &MainWindow::GuardarListaDobleClic);
+    connect(ui->CargarListaDoble,  &QPushButton::clicked, this, &MainWindow::CargarListaDobleClic);
+
 }
 
 MainWindow::~MainWindow() {
@@ -257,3 +279,76 @@ void MainWindow::CargarColaClic() {
     }
 }
 
+
+void MainWindow::BotonIngresarDLLClic() {
+    QString textoCapturado = ui->TextoIngresarDLL->text().trimmed();
+    if (!textoCapturado.isEmpty()) {
+        int valorNuevo = textoCapturado.toInt();
+        if (EstructuraListaDoble.AgregarAlFinal(valorNuevo)) {
+            RenderDeListaDoble.AnimarAgregarAlFinal(EstructuraListaDoble);
+            ui->TextoIngresarDLL->clear();
+        }
+    }
+    return;
+}
+
+void MainWindow::BotonEliminarDLLClic() {
+    QString textoCapturado = ui->TextoEliminarDLL->text().trimmed();
+    if (!textoCapturado.isEmpty()) {
+        int valorEliminar = textoCapturado.toInt();
+        int indiceEncontrado = EstructuraListaDoble.Buscar(valorEliminar);
+        if (indiceEncontrado >= 0) {
+            if (EstructuraListaDoble.EliminarPorValor(valorEliminar)) {
+                RenderDeListaDoble.AnimarEliminarEnPosicion(indiceEncontrado, EstructuraListaDoble);
+                ui->TextoEliminarDLL->clear();
+            }
+        }
+    }
+    return;
+}
+
+void MainWindow::BotonInsertarDLLClic() {
+    QString textoValor = ui->TextoIngresarDLL->text().trimmed();
+    QString textoPosicion = ui->TextoInsertarDLL->text().trimmed();
+    if (!textoValor.isEmpty() && !textoPosicion.isEmpty()) {
+        int valorNuevo = textoValor.toInt();
+        int posicionObjetivo = textoPosicion.toInt();
+        if (EstructuraListaDoble.InsertarPorPosicion(posicionObjetivo, valorNuevo)) {
+            RenderDeListaDoble.AnimarInsertarEnPosicion(posicionObjetivo, EstructuraListaDoble);
+            ui->TextoIngresarDLL->clear();
+            ui->TextoInsertarDLL->clear();
+        }
+    }
+    return;
+}
+
+void MainWindow::BotonBuscarDLLClic() {
+    QString textoCapturado = ui->TextoBuscarDLL->text().trimmed();
+    if (!textoCapturado.isEmpty()) {
+        int valorBuscado = textoCapturado.toInt();
+        int indiceEncontrado = EstructuraListaDoble.Buscar(valorBuscado);
+        if (indiceEncontrado >= 0) {
+            RenderDeListaDoble.ResaltarIndice(indiceEncontrado);
+        }
+    }
+    return;
+}
+
+void MainWindow::GuardarListaDobleClic() {
+    QString rutaArchivo = QFileDialog::getSaveFileName(this, "Guardar Lista Doble", "ListaDoble.txt", "Texto (*.txt)");
+    if (!rutaArchivo.isEmpty()) {
+        Persistencia::GuardarListaDoble(rutaArchivo, EstructuraListaDoble);
+    }
+    return;
+}
+
+void MainWindow::CargarListaDobleClic() {
+    QString rutaArchivo = QFileDialog::getOpenFileName(this, "Cargar Lista Doble", QString(), "Texto (*.txt)");
+    if (!rutaArchivo.isEmpty()) {
+        bool cargaExitosa = Persistencia::CargarListaDoble(rutaArchivo, EstructuraListaDoble);
+        if (cargaExitosa) {
+            RenderDeListaDoble.ReorganizarDesdeListaDoble(EstructuraListaDoble);
+        }
+    }
+    return;
+}
