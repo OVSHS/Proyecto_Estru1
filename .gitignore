@@ -1,0 +1,12 @@
+*.pro.user 
+*.user 
+*.autosave 
+/build*/ 
+*.o 
+*.obj 
+*.dll 
+*.exe 
+*.so 
+*.dylib 
+CMakeFiles/ 
+CMakeCache.txt 
